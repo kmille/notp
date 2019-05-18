@@ -1,4 +1,4 @@
-# Simple demonstration: How to use TOTP with python
+# How to use TOTP with python
 
 ## 
 ```
@@ -54,7 +54,11 @@ OTP: 340533
 
 ```
 
-# Use TOTP from command line (your second factor; tokenizer.py will just en/decrypt your OTP secret)
+# Use TOTP from command line 
+- use the command line (e. g. from your server) as your second factor
+- tokenizer.py will just en/decrypt your OTP secret
+- you just need otp.py for generating OTPs
+
 ```
 kmille@linbox notp master % python tokenizer.py 
 encrypt or decrypt <context>

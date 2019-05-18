@@ -75,7 +75,7 @@ if __name__ == '__main__':
     if len(sys.argv) != 3:
         print("encrypt or decrypt <context>")
         exit()
-    if sys.argv[1]  == "encrypt":
+    if sys.argv[1] == "encrypt":
         encrypt_token(sys.argv[2])
-    if sys.argv[1]  == "decrypt":
+    if sys.argv[1] == "decrypt":
         decrypt_token(sys.argv[2])

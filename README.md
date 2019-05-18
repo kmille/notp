@@ -1,4 +1,4 @@
-# Check out the yubikey for using it for ssh authentication
+# The yubikey directory contains docs for using it for ssh authentication
 # How to use TOTP with python
 
 ## 

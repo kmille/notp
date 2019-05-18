@@ -8,7 +8,9 @@ import hashlib
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import cryptography.exceptions 
 
-base_dir = "data"
+
+here = os.path.dirname(os.path.realpath(__file__))
+base_dir = os.path.join(here, "data")
 
 def a(s):
     return binascii.hexlify(s).decode()
@@ -19,8 +21,8 @@ def b(s):
 
 
 def test_encryption():
-    data = b"a secrsddsfdsfdsffdset message"
-    nonce = b"84b41aa0e4c1277ee3d785e2"
+    data = b"a secret message"
+    nonce = b"84b41aa0e4c1277ee3d785e2" # need to be same during en- and decryption
     key = hashlib.sha256(getpass.getpass().encode()).digest()
     print("data: '{}'  nonce: {}   key: {}".format(data.decode(), a(nonce), a(key)))
 
@@ -48,6 +50,7 @@ def encrypt_token(context):
 
     with open(token_file, "w") as f:
         f.write(a(nonce) + "\n" + a(ct))
+    os.system("chmod 600 {}".format(token_file))
     print("Wrote encrpyted OTP Token to file")
 
 
@@ -61,10 +64,10 @@ def decrypt_token(context):
     aesgcm = AESGCM(key)
     try:
         token = aesgcm.decrypt(b(nonce), b(ciphertext), None).decode()
-        print("Decrypted: {}".format(token))
+        #print("Decrypted: {}".format(token))
     except cryptography.exceptions.InvalidTag:
         print("wrong password")
-        return None
+        exit()
     return token
 
 

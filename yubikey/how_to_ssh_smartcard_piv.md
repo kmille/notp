@@ -6,7 +6,7 @@
 - tested with the Yubikey NEO and Arch Linux
 
 
-# Generate private key on Yubikey
+# Generate a new private key on the Yubikey
 ```
 kmille@linbox tmp% pacman -Qo /usr/lib64/pkcs11/opensc-pkcs11.so                                                       
 /usr/lib/pkcs11/opensc-pkcs11.so is owned by opensc 0.19.0-2
@@ -41,7 +41,7 @@ CCC:    No data available
 PIN tries left: 3
 
 
-Generate a new private key (2048 bit, take some tome)
+Generate a new private key (2048 bit, take some tome, 9a is the slot)
 kmille@linbox tmp% yubico-piv-tool -a generate -s 9a -o public.pem
 Successfully generated a new private key.
 
@@ -138,21 +138,23 @@ kmille@linbox tmp% ssh-add -l
 kmille@linbox tmp% ssh localhost
 Last login: Fri May 17 12:51:53 2019 from ::1
 
-Bug for me: If you remove the the yubike and put it back in I can't use it with the agent
+Bug for me: If you remove the the yubikey and put it back in I can't use it with the already running agent.
 kmille@linbox tmp% ssh localhost     
 sign_and_send_pubkey: signing failed: agent refused operation
 kmille@localhost: Permission denied (publickey).
 kmille@linbox tmp%  ssh-add -s /usr/lib64/pkcs11/opensc-pkcs11.so
 Enter passphrase for PKCS#11: 
 Could not add card "/usr/lib64/pkcs11/opensc-pkcs11.so": agent refused operation
+
+Don't forget to remove the key from ~/.ssh/authorized_keys
 ```
 
-# Use an existing ssh key
+# Import an existing ssh key to the Yubikey
 ```
 kmille@linbox tmp% pacman -Qo /usr/bin/puttygen
 /usr/bin/puttygen is owned by putty 0.71-1
 
-1. Assumption you already have an encrpyted ssh key
+1. Let's generate a ssh key for our example
 kmille@linbox tmp% ssh-keygen -f thisismyexistingkey 
 Generating public/private rsa key pair.
 Enter passphrase (empty for no passphrase): 
@@ -289,40 +291,30 @@ dn7f9JvwrAQBtszHXKPW+3pw8yzM/xnMGt53qdADjm2zcZUR69AtLQl3e8xU+nKT
 iwX6iYXT4qU0MWGiiUsE6bU1mm1wKnHHAtmbi1UN7gdfRRXv6gCS
 -----END RSA PRIVATE KEY-----
 
+4. Import our private key
 kmille@linbox tmp% yubico-piv-tool -s 9a -a import-key  -K PEM -i thisismyexistingkey.rsa
 Successfully imported a new private key.
 
-
-kmille@linbox tmp% openssl rsa -in ovh.rsa -pubout | tee ovh.rsa.pub
+kmille@linbox tmp% openssl rsa -in thisismyexistingkey.rsa -pubout  | tee thisismyexistingkey.rsa.pub
 writing RSA key
 -----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmzu84NTmCqiyyXskRBYr
-tZcE+PlNGs7SEZacJejTB3sDFKKWFY7OlfpT5cjtSnuFB+/okOa8Bfy8lkppLt+Q
-ZyKS8KyvuBHAEF9i9djKPn+dBibbe8eurckTacNY+td3rzpaSnxXSxf1OYtBwAff
-Qg8Jw6KMxGC7IZQqsQWuP1xh8NUZcNbPZCc4clPu4nQzmnEPvjR1PIvyg2vNac+p
-G3F4kD70YqF6l6+s4RG/aj3Q47uz+pH5g3OpMG3nfvT8xyM19YdrEEFtRYVithR9
-poxMFbq/KPnmLZByCn0YJ8aMbpavGuRnvhT5qd27cktz8w/Bp+2+nwr0bUY/5Cgn
-BwIDAQAB
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkZdBpTIbtD5v60OYoYfH
+C6tbpGzZ05+ie2sPhuyjSubsDRAzaJnjRIlaPOByeZ252+gt+lOvZ8OsInxYJTTJ
+ERPrh3RZg6EuFOW/wDR+zOL+kbqGUCJaY1wO4kuJ0Az/E7OtWZ4APTjNRd7ZBW0r
+YqCC3MtYGFa4DX2hprznPrZ6vZuKwvfxE9QzN2jXhveBbvugbauFXz+B4o4G/BQL
+0j9P46tNLbvpafRhvaxRpZwKqKAz/QPgBu+2usfLVENiwRTvkxTTVq/per8RD5OO
+SGyVaFWAgPfsRVgvVH5hwmd/0DSOthjo+NGXspITsG6cO4mx73mQ/ez+gOD5qkD3
+VQIDAQAB
 -----END PUBLIC KEY-----
 
 
-kmille@linbox tmp% yubico-piv-tool -a verify-pin -a selfsign-certificate -s 9a -S "/CN=SSH key/" -i ovh.rsa.pub -o cert.pem                                              
+kmille@linbox tmp% yubico-piv-tool -a verify-pin -a selfsign-certificate -s 9a -S "/CN=SSH key/" -i thisismyexistingkey.rsa.pub -o cert.pem                                              
 Enter PIN:
 Successfully verified PIN.
 Successfully generated a new self signed certificate.
-kmille@linbox tmp% yubico-piv-tool -a import-certificate -s 9a -i cert.pem
 
-kmille@linbox tmp% yubico-piv-tool -a status                              
-CHUID:  3019d4e739da739ced39ce739d836858210842108421c84210c3eb341028df6bd1b33af16ec792a5098a14e12e350832303330303130313e00fe00
-CCC:    No data available
-Slot 9a:
-        Algorithm:      RSA2048
-        Subject DN:     CN=SSH key
-        Issuer DN:      CN=SSH key
-        Fingerprint:    d9e945b719c00cd547db0c1b1a58d23bcd1f9e0ffe162c3ad2992fc5f46ab350
-        Not Before:     May 18 09:56:19 2019 GMT
-        Not After:      May 17 09:56:19 2020 GMT
-PIN tries left: 3
+kmille@linbox tmp% yubico-piv-tool -a import-certificate -s 9a -i cert.pem
+Successfully imported a new certificate.
 
 kmille@linbox tmp% ssh <ip>
 Enter PIN for 'SSH key':

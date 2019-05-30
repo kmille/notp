@@ -321,6 +321,16 @@ Enter PIN for 'SSH key':
 Linux yolo 4.19.0-2-amd64 #1 SMP Debian 4.19.16-1 (2019-01-17) x86_64
 ```
 
+# Change PIN
+```
+kmille@linbox tmp% yubico-piv-tool -a change-pin
+Enter pin: 
+Enter new pin: 
+Verifying - Enter new pin: 
+Successfully changed the pin code.
+```
+
+
 # Resources 
 - https://access.redhat.com/articles/1523343
 - https://www.freifunk-gera-greiz.de/wiki/-/wiki/Allgemein/SSH+mit+Yubikey+4+unter+Ubuntu/pop_up

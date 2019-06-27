@@ -70,6 +70,10 @@ Enter PIN:
 Successfully verified PIN.
 Successfully generated a new self signed certificate.
 
+kmille@linbox tmp% yubico-piv-tool -a import-certificate -s 9a -i cert.pem
+Successfully imported a new certificate.
+
+
 kmille@linbox tmp% file cert.pem 
 cert.pem: PEM certificate
 

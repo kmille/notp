@@ -142,14 +142,6 @@ kmille@linbox tmp% ssh-add -l
 kmille@linbox tmp% ssh localhost
 Last login: Fri May 17 12:51:53 2019 from ::1
 
-Bug for me: If you remove the the yubikey and put it back in I can't use it with the already running agent.
-kmille@linbox tmp% ssh localhost     
-sign_and_send_pubkey: signing failed: agent refused operation
-kmille@localhost: Permission denied (publickey).
-kmille@linbox tmp%  ssh-add -s /usr/lib64/pkcs11/opensc-pkcs11.so
-Enter passphrase for PKCS#11: 
-Could not add card "/usr/lib64/pkcs11/opensc-pkcs11.so": agent refused operation
-
 Don't forget to remove the key from ~/.ssh/authorized_keys
 ```
 

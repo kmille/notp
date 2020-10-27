@@ -1,6 +1,6 @@
 asn1crypto==0.24.0
 cffi==1.12.2
-cryptography==2.6.1
+cryptography==3.2
 MarkupSafe==1.1.1
 pycparser==2.19
 pyotp==2.2.7

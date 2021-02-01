@@ -1,4 +1,4 @@
-# Use case
+## Use case
 - use the Yubikey for ssh authentication
 - the private key will never leave the yubikey
 - use the Yubikey as Smartcard (PIV)
@@ -6,7 +6,17 @@
 - tested with the Yubikey NEO and Arch Linux
 
 
-# Generate a new private key on the Yubikey
+
+This document shows:
+
+- How to generate a private key on the Yubikey?
+- How to import an existing ssh key to the Yubikey?
+- How to change the PIN?
+- How to unblock the PIN with the PUK?
+- How to change the PUK?
+
+## Generate a new private key on the Yubikey
+
 ```
 kmille@linbox tmp% pacman -Qo /usr/lib64/pkcs11/opensc-pkcs11.so                                                       
 /usr/lib/pkcs11/opensc-pkcs11.so is owned by opensc 0.19.0-2
@@ -145,7 +155,7 @@ Last login: Fri May 17 12:51:53 2019 from ::1
 Don't forget to remove the key from ~/.ssh/authorized_keys
 ```
 
-# Import an existing ssh key to the Yubikey
+## Import an existing ssh key to the Yubikey
 ```
 kmille@linbox tmp% pacman -Qo /usr/bin/puttygen
 /usr/bin/puttygen is owned by putty 0.71-1
@@ -317,7 +327,17 @@ Enter PIN for 'SSH key':
 Linux yolo 4.19.0-2-amd64 #1 SMP Debian 4.19.16-1 (2019-01-17) x86_64
 ```
 
-# Change PIN
+## PIN/PUK management
+
+>by default, the user PIN is blocked when three consecutive incorrect PINs have been entered. The PIN Unblock Code (PUK) is used for unblocking the User PIN. If both the PIN and the PUK are blocked, the YubiKey must be reset, which deletes any loaded certificates and returns the YubiKey to a factory default state.  
+
+more information
+
+- https://support.yubico.com/hc/en-us/articles/360015654100-YubiKey-PIN-and-PUK-User-Management#PIN-Unblock
+- https://developers.yubico.com/yubikey-piv-manager/PIN_and_Management_Key.html
+
+## How to change the PIN of the Yubikey?
+
 ```
 kmille@linbox tmp% yubico-piv-tool -a change-pin
 Enter pin: 
@@ -326,8 +346,45 @@ Verifying - Enter new pin:
 Successfully changed the pin code.
 ```
 
+Use case: PIN is blocked because you entered the wrong PIN too often. Of course, you can't just change the PIN without knowing the current one or if the PIN is blocked.
 
-# Resources 
+```
+kmille@linbox:tmp yubico-piv-tool -a change-pin
+Enter pin: 
+Enter new pin: 
+Verifying - Enter new pin: 
+The pin code is blocked, use the unblock-pin action to unblock it.
+```
+
+## How to unblock the PIN with the PUK (default PUK is `12345678`)?
+
+```
+kmille@linbox:tmp yubico-piv-tool -a unblock-pin
+Enter puk: 
+Enter new pin: 
+Verifying - Enter new pin: 
+Successfully unblocked the pin code.
+kmille@linbox:tmp 
+```
+
+Changing the PIN without changing the default PUK doesn't make that much sense. 
+
+## How to change the PUK?
+
+```
+kmille@linbox:tmp yubico-piv-tool -a change-puk           
+Enter puk: 
+Enter new puk: 
+Verifying - Enter new puk: 
+Successfully changed the puk code.
+```
+
+TODO:
+
+- management key
+
+## Resources 
+
 - https://access.redhat.com/articles/1523343
 - https://www.freifunk-gera-greiz.de/wiki/-/wiki/Allgemein/SSH+mit+Yubikey+4+unter+Ubuntu/pop_up
 - https://developers.yubico.com/PIV/Guides/SSH_with_PIV_and_PKCS11.html

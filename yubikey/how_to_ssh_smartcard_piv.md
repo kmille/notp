@@ -15,6 +15,16 @@ This document shows:
 - How to unblock the PIN with the PUK?
 - How to change the PUK?
 
+
+
+## Show the public key of the currently installed key pair
+
+```bash
+kmille@linbox tmp% ssh-keygen -D /usr/lib64/pkcs11/opensc-pkcs11.so -e
+ssh-rsa ...................ImCUR PIV AUTH pubkey
+
+```
+
 ## Generate a new private key on the Yubikey
 
 ```

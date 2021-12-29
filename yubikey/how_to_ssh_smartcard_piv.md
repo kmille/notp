@@ -17,6 +17,14 @@ This document shows:
 
 
 
+## cannot read public key from pkcs11
+
+```bash
+kmille@linbox:.ssh ssh-keygen -D /usr/lib64/pkcs11/opensc-pkcs11.so -e
+cannot read public key from pkcs11
+kmille@linbox:~ sudo systemctl start pcscd.service 
+```
+
 ## Show the public key of the currently installed key pair
 
 ```bash
